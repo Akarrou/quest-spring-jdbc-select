@@ -19,7 +19,6 @@ public class SchoolRepository {
 
     @GetMapping("/api/school")
     public List<School> findAll() {
-
         try (
                 Connection connection = DriverManager.getConnection(
                         DB_URL, DB_USER, DB_PASSWORD
@@ -28,10 +27,8 @@ public class SchoolRepository {
                         "SELECT * FROM school"
                 );
                 ResultSet resulSet = statement.executeQuery();
-
         ) {
             List<School> school = new ArrayList<School>();
-
             while (resulSet.next()) {
                 Long id = resulSet.getLong("id");
                 String name = resulSet.getString("name");
@@ -39,7 +36,6 @@ public class SchoolRepository {
                 String country = resulSet.getString("country");
                 school.add(new School(id, name, capacity, country));
             }
-
             return school;
         } catch (SQLException e) {
             // send HttpStatus 500 to the client if something goes wrong
@@ -52,7 +48,6 @@ public class SchoolRepository {
 
 
     public School findById(Long id) {
-
         try {
             Connection connection = DriverManager.getConnection(
                     DB_URL, DB_USER, DB_PASSWORD
@@ -70,17 +65,13 @@ public class SchoolRepository {
 
                 return new School(id, name, capacity, country);
             }
-
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
-
         return null;
     }
 
-    public School findByCountry(String country) {
+    public List<School> findByCountry(String country) {
         try {
             Connection connection = DriverManager.getConnection(
                     DB_URL, DB_USER, DB_PASSWORD
@@ -90,21 +81,18 @@ public class SchoolRepository {
             );
             statement.setString(1, country);
             ResultSet resultSet = statement.executeQuery();
-            if (resultSet.next()) {
+            List<School> school = new ArrayList<School>();
+            while (resultSet.next()) {
                 Long id = resultSet.getLong("id");
                 String name = resultSet.getString("name");
                 Long capacity = resultSet.getLong("capacity");
                  country = resultSet.getString("country");
-
-                return new School(id, name, capacity, country);
+                school.add(new School(id, name, capacity, country));
             }
-
-
+            return school;
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
-
         return null;
     }
 }
